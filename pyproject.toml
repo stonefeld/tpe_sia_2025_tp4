@@ -12,3 +12,6 @@ dependencies = [
     "pyside6>=6.9.0",
     "scikit-learn>=1.6.1",
 ]
+
+[tool.black]
+line-length = 160
