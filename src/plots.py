@@ -24,12 +24,15 @@ def plot_som_assignments(som):
         cmap="Blues",
         cbar_kws={"label": "Cantidad de países"},
         linewidths=0.5,
-        linecolor="black",
         ax=ax,
     )
     ax.set_title("Cantidad de Países por Neurona")
     ax.set_xlabel("")
     ax.set_ylabel("")
+
+    cbar = ax.collections[0].colorbar
+    cbar.outline.set_edgecolor("black")
+    cbar.outline.set_linewidth(0.5)
 
     # Annotate with entity names
     for row in range(som.k):

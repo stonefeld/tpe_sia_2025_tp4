@@ -13,7 +13,7 @@ def load_csv(filepath):
 
 def main():
     entities, data = load_csv("assets/europe.csv")
-    som = Kohonen(entities, data, k=3, learning_rate=0.1, standarization="zscore", weight_init="uniform")
+    som = Kohonen(entities, data, k=4, learning_rate=0.1, standarization="zscore", weight_init="uniform")
     som.train(epochs=10000, tolerance=1e-4)
     plot_som_assignments(som)
 
