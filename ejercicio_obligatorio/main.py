@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
 # 1. Load the data
-df = pd.read_csv("ejercicio_obligatorio/europe.csv")
+df = pd.read_csv("assets/europe.csv")
 
 # 2. Preprocess: Remove 'Country', standardize the data
 countries = df["Country"]
