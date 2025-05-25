@@ -1,5 +1,6 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 
 def plot_projection(data, countries, w, title="Proyección sobre PC1 (Regla de Oja)", save_path=None):
     """
@@ -21,6 +22,7 @@ def plot_projection(data, countries, w, title="Proyección sobre PC1 (Regla de O
         plt.savefig(save_path)
     plt.show()
 
+
 def plot_projection_difference(entities, proj_oja, proj_pca, save_path=None):
     diff = np.abs(proj_oja - proj_pca)
     sorted_idx = np.argsort(-diff)
@@ -38,10 +40,11 @@ def plot_projection_difference(entities, proj_oja, proj_pca, save_path=None):
         fig.savefig(save_path, dpi=300, bbox_inches="tight")
     plt.show()
 
+
 def plot_scatter_oja_vs_pca(proj_oja, proj_pca, save_path=None):
     fig, ax = plt.subplots(figsize=(6, 6))
     ax.scatter(proj_pca, proj_oja, color="purple")
-    ax.plot([min(proj_pca), max(proj_pca)], [min(proj_pca), max(proj_pca)], linestyle='--', color='gray')
+    ax.plot([min(proj_pca), max(proj_pca)], [min(proj_pca), max(proj_pca)], linestyle="--", color="gray")
     ax.set_title("Dispersión: Proyección PCA vs Oja")
     ax.set_xlabel("Proyección PCA")
     ax.set_ylabel("Proyección Oja")

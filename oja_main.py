@@ -1,14 +1,17 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
 from sklearn.decomposition import PCA
+
 from src.oja import Oja
 from src.oja_plots import plot_projection, plot_projection_difference, plot_scatter_oja_vs_pca
+
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
     entities = df["Country"].tolist()
     data = df.drop("Country", axis=1).values
     return entities, data
+
 
 def main():
     # === Cargar datos ===
@@ -41,6 +44,7 @@ def main():
     plot_projection(data_zscore, entities, w_pca, title="Proyección sobre PC1 (PCA)", save_path="results/pca_projection.png")
     plot_projection_difference(entities, proj_oja, proj_pca, save_path="results/diff_oja_pca.png")
     plot_scatter_oja_vs_pca(proj_oja, proj_pca, save_path="results/scatter_oja_pca.png")
+
 
 if __name__ == "__main__":
     main()

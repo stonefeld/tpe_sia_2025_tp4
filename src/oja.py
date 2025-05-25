@@ -1,7 +1,8 @@
 import numpy as np
 
+
 class Oja:
-    def __init__(self, entities, data, learning_rate=0.01, standarization='zscore'):
+    def __init__(self, entities, data, learning_rate=0.01, standarization="zscore"):
         """
         Inicializa el modelo de Oja.
         :param entities: lista de nombres (por ejemplo, países)

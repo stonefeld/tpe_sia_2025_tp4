@@ -57,7 +57,6 @@ def plot_som_assignments(som):
     plt.show()
 
 
-
 def plot_som_distance_map(som):
     # Convertir la lista de pesos a un array NumPy
     weights = np.array(som.weights).reshape(som.k, som.k, -1)
