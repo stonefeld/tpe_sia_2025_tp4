@@ -1,11 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+from src.utils import save_plot
 
-def plot_projection(data, countries, w, title="Proyección sobre PC1 (Regla de Oja)", save_path=None):
-    """
-    Proyecta los datos sobre el vector w y grafica un barchart ordenado.
-    """
+
+def plot_projection(data, countries, w, title="", save_path=None):
     projections = data @ w
     sorted_idx = np.argsort(projections)
     sorted_countries = np.array(countries)[sorted_idx]
@@ -17,9 +16,9 @@ def plot_projection(data, countries, w, title="Proyección sobre PC1 (Regla de O
     ax.set_xlabel("Proyección")
     ax.set_ylabel("Países")
 
-    plt.tight_layout()
     if save_path:
-        plt.savefig(save_path)
+        save_plot(fig, save_path)
+
     plt.show()
 
 
@@ -37,7 +36,8 @@ def plot_projection_difference(entities, proj_oja, proj_pca, save_path=None):
     plt.tight_layout()
 
     if save_path:
-        fig.savefig(save_path, dpi=300, bbox_inches="tight")
+        save_plot(fig, save_path)
+
     plt.show()
 
 
@@ -52,5 +52,6 @@ def plot_scatter_oja_vs_pca(proj_oja, proj_pca, save_path=None):
     plt.tight_layout()
 
     if save_path:
-        fig.savefig(save_path, dpi=300, bbox_inches="tight")
+        save_plot(fig, save_path)
+
     plt.show()

@@ -1,21 +1,12 @@
 import numpy as np
-from scipy.stats import zscore
+
+from utils import standarize
 
 
 class Kohonen:
     def __init__(self, entities, x, k=3, learning_rate=0.1, standarization="unit", weight_init="uniform", r=None, decay_fn=None):
         self.entities = entities
-        x = np.array(x)
-
-        if standarization == "unit":
-            norms = np.linalg.norm(x, axis=1, keepdims=True)
-            norms[norms == 0] = 1
-            self.x = x / norms
-        elif standarization == "zscore":
-            self.x = zscore(x, axis=0)
-        else:
-            self.x = x  # no standardization
-
+        self.x = standarize(x, standarization)
         self.k = k
         self.learning_rate = learning_rate
         self.r = r if r is not None else k
@@ -31,18 +22,18 @@ class Kohonen:
         else:
             raise ValueError(f"Unknown weight_init method: {weight_init}")
 
-        self.decay_function = decay_fn if decay_fn else lambda x, t, m: x
+        self.decay_fn = decay_fn if decay_fn else lambda x, t, m: x
 
     def train(self, epochs=1000):
         for epoch in range(epochs):
+            lr = self.decay_fn(self.learning_rate, epoch, epochs)
+            r = max(self.decay_fn(self.r, epoch, epochs), 1)
+
             # idx = np.random.randint(len(self.x))
             # xi = self.x[idx]
-            # TODO: revisar si se hace por cada elemento o por cada epoch
+            # TODO: revisar si se hace por cada elemento o elemento random
             for xi in self.x:
                 wk_idx = self._get_winner(xi)
-
-                lr = self.decay_function(self.learning_rate, epoch, epochs)
-                r = max(self.decay_function(self.r, epoch, epochs), 1)
 
                 for i in self._get_neighbors(wk_idx, r):
                     self.weights[i] += lr * (xi - self.weights[i])

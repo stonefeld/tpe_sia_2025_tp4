@@ -1,20 +1,10 @@
-import math
-
-import pandas as pd
-
 from src.kohonen import Kohonen
 from src.plots import plot_som_assignments, plot_som_distance_map
-
-
-def load_csv(filepath):
-    df = pd.read_csv(filepath)
-    entities = df["Country"].tolist()
-    data = df.drop("Country", axis=1).values
-    return entities, data
+from src.utils import load_countries_data
 
 
 def main():
-    entities, data = load_csv("assets/europe.csv")
+    entities, data = load_countries_data("assets/europe.csv")
     som = Kohonen(
         entities,
         data,
