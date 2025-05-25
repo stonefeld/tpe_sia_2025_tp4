@@ -39,4 +39,4 @@ class Hopfield:
         return np.array(history)
 
     def energy(self, state):
-        return -0.5 * np.dot(state.T, np.dot(self.weights, state))
+        return -np.dot(state.T, np.dot(self.weights, state))
