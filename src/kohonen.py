@@ -1,6 +1,6 @@
 import numpy as np
 
-from utils import standarize
+from src.utils import standarize
 
 
 class Kohonen:
@@ -26,13 +26,21 @@ class Kohonen:
 
     def train(self, epochs=1000):
         for epoch in range(epochs):
-            lr = self.decay_fn(self.learning_rate, epoch, epochs)
-            r = max(self.decay_fn(self.r, epoch, epochs), 1)
+            # lr = self.decay_fn(self.learning_rate, epoch, epochs)
+            # r = max(self.decay_fn(self.r, epoch, epochs), 1)
 
+            # TODO: revisar si se hace por cada elemento o elemento random
             # idx = np.random.randint(len(self.x))
             # xi = self.x[idx]
-            # TODO: revisar si se hace por cada elemento o elemento random
+            # wk_idx = self._get_winner(xi)
+            #
+            # for i in self._get_neighbors(wk_idx, r):
+            #     self.weights[i] += lr * (xi - self.weights[i])
+
             for xi in self.x:
+                lr = self.decay_fn(self.learning_rate, epoch, epochs)
+                r = max(self.decay_fn(self.r, epoch, epochs), 1)
+
                 wk_idx = self._get_winner(xi)
 
                 for i in self._get_neighbors(wk_idx, r):

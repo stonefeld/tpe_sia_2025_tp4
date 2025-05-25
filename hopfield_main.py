@@ -63,6 +63,11 @@ def main():
     plot_comparison(original, noisy, history[-1])
     plot_recall_steps(history)
 
+    # ESTADO ESPURIO
+    random_pattern = np.random.choice([-1, 1], size=25)
+    history = net.recall(random_pattern, steps=5)
+    plot_recall_steps(history)
+
 
 if __name__ == "__main__":
     main()
