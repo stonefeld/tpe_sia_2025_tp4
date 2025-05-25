@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 
 from src.kohonen import Kohonen
@@ -13,8 +15,17 @@ def load_csv(filepath):
 
 def main():
     entities, data = load_csv("assets/europe.csv")
-    som = Kohonen(entities, data, k=4, learning_rate=0.1, standarization="zscore", weight_init="uniform")
-    som.train(epochs=10000, tolerance=1e-4)
+    som = Kohonen(
+        entities,
+        data,
+        k=4,
+        r=2,
+        learning_rate=0.1,
+        standarization="zscore",
+        weight_init="sample",
+        decay_fn=lambda x, t, m: x * 1 / (1 + t),
+    )
+    som.train(epochs=1000)
     plot_som_assignments(som)
     plot_som_distance_map(som)
 
