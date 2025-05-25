@@ -1,7 +1,7 @@
-# hopfield.py
 import numpy as np
 
-class HopfieldNetwork:
+
+class Hopfield:
     def __init__(self, size):
         self.size = size
         self.weights = np.zeros((size, size))
@@ -10,18 +10,32 @@ class HopfieldNetwork:
         for p in patterns:
             p = p.reshape(self.size, 1)
             self.weights += np.dot(p, p.T)
+
+        self.weights /= self.size
         np.fill_diagonal(self.weights, 0)
 
-    def recall(self, pattern, steps=10):
+    def recall(self, pattern, steps=50):
         state = pattern.copy()
         history = [state.copy()]
+        n = self.size
+
         for _ in range(steps):
-            new_state = state.copy()
-            for i in range(self.size):
+            indices = np.random.permutation(n)
+            changed = False
+
+            for i in indices:
                 s = np.dot(self.weights[i], state)
-                new_state[i] = 1 if s >= 0 else -1
-            state = new_state
+                new_value = 1 if s >= 0 else -1
+
+                if new_value != state[i]:
+                    state[i] = new_value
+                    changed = True
+
             history.append(state.copy())
+
+            if not changed:
+                break
+
         return np.array(history)
 
     def energy(self, state):
