@@ -1,12 +1,12 @@
 import numpy as np
 from sklearn.decomposition import PCA
 
-from src.oja import Oja
-from src.oja_plots import plot_projection, plot_projection_difference, plot_scatter_oja_vs_pca
+from src.oja.network import Oja
+from src.oja.plots import plot_projection, plot_projection_difference, plot_scatter_oja_vs_pca
 from src.utils import load_countries_data, standarize
 
 
-def main():
+def run_oja():
     # === Cargar datos ===
     entities, data = load_countries_data("assets/europe.csv")
 
@@ -43,4 +43,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_oja()

@@ -1,10 +1,10 @@
 import numpy as np
 
-from src.hopfield import Hopfield
-from src.hopfield_plots import plot_comparison, plot_recall_steps
+from src.hopfield.network import Hopfield
+from src.hopfield.plots import plot_comparison, plot_recall_steps
 
 
-def main():
+def run_hopfield():
     # Letras A, E, H, J con formas claras
     letters = {
         "A": np.array(
@@ -70,4 +70,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run_hopfield()
