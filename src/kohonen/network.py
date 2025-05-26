@@ -1,9 +1,11 @@
+from abc import ABC, abstractmethod
+
 import numpy as np
 
 from src.utils import standarize
 
 
-class Kohonen:
+class Kohonen(ABC):
     def __init__(self, entities, x, k=3, learning_rate=0.1, standarization="unit", weight_init="uniform", r=None, decay_fn=None):
         self.entities = entities
         self.x = standarize(x, standarization)
@@ -55,13 +57,37 @@ class Kohonen:
     def _euclidean_distance(self, x, y):
         return np.sqrt(np.sum((x - y) ** 2))
 
+    @abstractmethod
+    def _get_neighbors(self, winner_idx, r):
+        pass
+
+
+class KohonenSquare(Kohonen):
     def _get_neighbors(self, winner_idx, r):
         winner_coords = np.array(divmod(winner_idx, self.k))
         neighbors = []
 
         for i in range(self.k**2):
             coords = np.array(divmod(i, self.k))
-            if self._euclidean_distance(winner_coords, coords) <= r:
+            if np.linalg.norm(winner_coords - coords) <= r:
                 neighbors.append(i)
 
         return neighbors
+
+
+class KohonenHexagonal(Kohonen):
+    def _get_neighbors(self, winner_idx, r):
+        winner_coords = np.array(divmod(winner_idx, self.k))
+        neighbors = []
+
+        for i in range(self.k**2):
+            coords = np.array(divmod(i, self.k))
+            if self._hexagonal_distance(winner_coords, coords) <= r:
+                neighbors.append(i)
+
+        return neighbors
+
+    def _hexagonal_distance(self, a, b):
+        dx = abs(a[0] - b[0])
+        dy = abs(a[1] - b[1])
+        return max(dx, dy, (dx + dy) // 2)
