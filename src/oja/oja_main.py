@@ -1,8 +1,8 @@
 import numpy as np
 from sklearn.decomposition import PCA
 
-from src.oja.network import Oja
-from src.oja.plots import plot_projection, plot_projection_difference, plot_scatter_oja_vs_pca
+from src.oja.oja_network import Oja
+from src.oja.oja_plots import plot_projection, plot_projection_difference, plot_scatter_oja_vs_pca
 from src.utils import load_countries_data, standarize
 
 

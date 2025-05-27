@@ -14,14 +14,14 @@ def plot_pattern(pattern, title="", ax=None):
     ax.axis("off")
 
 
-def plot_recall_steps(history, title_prefix="Paso"):
+def plot_recall_steps(history, title_prefix="Paso", filepath="results/hopfield_pasos.png"):
     steps = history.shape[0]
     fig, axes = plt.subplots(1, steps, figsize=(steps * 2, 2))
 
     for i in range(steps):
         plot_pattern(history[i], title=f"{title_prefix} {i}", ax=axes[i])
 
-    save_plot(fig, "results/hopfield_pasos.png")
+    save_plot(fig, filepath)
     plt.show()
 
 

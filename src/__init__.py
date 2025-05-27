@@ -1,3 +1,0 @@
-"""
-Paquete principal del proyecto.
-""" 

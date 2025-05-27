@@ -1,7 +1,7 @@
 import numpy as np
 
-from src.hopfield.network import Hopfield
-from src.hopfield.plots import plot_comparison, plot_recall_steps
+from src.hopfield.hopfield_network import Hopfield
+from src.hopfield.hopfield_plots import plot_comparison, plot_recall_steps
 
 
 def run_hopfield():
@@ -66,7 +66,7 @@ def run_hopfield():
     # ESTADO ESPURIO
     random_pattern = np.random.choice([-1, 1], size=25)
     history = net.recall(random_pattern, steps=5)
-    plot_recall_steps(history)
+    plot_recall_steps(history, filepath="results/hopfield_espurios.png")
 
 
 if __name__ == "__main__":

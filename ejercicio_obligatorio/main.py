@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from scipy.stats import zscore
 
 # 1. Load the data
 df = pd.read_csv("assets/europe.csv")
@@ -9,8 +10,7 @@ df = pd.read_csv("assets/europe.csv")
 # 2. Preprocess: Remove 'Country', standardize the data
 countries = df["Country"]
 X = df.drop("Country", axis=1)
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+X_scaled = zscore(X, axis=0)  # Standardize the data using z-score normalization
 
 # 3. Apply PCA
 pca = PCA()

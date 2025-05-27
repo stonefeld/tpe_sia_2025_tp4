@@ -1,5 +1,0 @@
-__init__
-hopfield
-kohonen
-oja
-utils

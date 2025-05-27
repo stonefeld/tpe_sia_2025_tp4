@@ -1,8 +1,8 @@
 import argparse
 
-from src.hopfield.main import run_hopfield
-from src.kohonen.main import run_kohonen, run_kohonen_hexagonal
-from src.oja.main import run_oja
+from src.hopfield.hopfield_main import run_hopfield
+from src.kohonen.kohonen_main import run_kohonen, run_kohonen_hexagonal
+from src.oja.oja_main import run_oja
 
 
 def main():

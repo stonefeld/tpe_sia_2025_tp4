@@ -1,7 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
 from src.kohonen.kohonen_network import KohonenSquare
 from src.utils import load_countries_data, standarize
+
 
 def compare_kohonen():
     entities, data = load_countries_data("assets/europe.csv")
@@ -19,7 +21,10 @@ def compare_kohonen():
     for i, std in enumerate(methods):
         for j, lr in enumerate(lrs):
             som = KohonenSquare(
-                entities, data, k=4, r=2,
+                entities,
+                data,
+                k=4,
+                r=2,
                 learning_rate=lr,
                 standarization=std,
                 weight_init="sample",
@@ -43,7 +48,10 @@ def compare_kohonen():
     for i, wi in enumerate(weight_inits):
         for j, (df_name, df) in enumerate(decay_fns):
             som = KohonenSquare(
-                entities, data, k=4, r=2,
+                entities,
+                data,
+                k=4,
+                r=2,
                 learning_rate=0.1,
                 standarization="zscore",
                 weight_init=wi,
@@ -66,7 +74,10 @@ def compare_kohonen():
     fig, axes = plt.subplots(1, len(rs), figsize=(15, 3))
     for j, r in enumerate(rs):
         som = KohonenSquare(
-            entities, data, k=4, r=r,
+            entities,
+            data,
+            k=4,
+            r=r,
             learning_rate=0.1,
             standarization="zscore",
             weight_init="sample",
@@ -84,6 +95,7 @@ def compare_kohonen():
     plt.suptitle("Comparación: r")
     plt.tight_layout()
     plt.show()
+
 
 if __name__ == "__main__":
     compare_kohonen()

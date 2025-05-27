@@ -69,9 +69,10 @@ def plot_square_som_distance_map(som):
             if j < som.k - 1:
                 neighbors.append(weights[i, j + 1])
 
-            dists = [np.linalg.norm(weights[i, j] - n) for n in neighbors]
-            umatrix[i, j] = np.mean(dists)
+            w = weights[i, j]
+            umatrix[i, j] = np.mean([np.sqrt(np.sum((w - n) ** 2)) for n in neighbors])
 
+    umatrix = (umatrix - np.min(umatrix)) / (np.max(umatrix) - np.min(umatrix))
     fig, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(
         umatrix,
@@ -93,10 +94,6 @@ def plot_square_som_distance_map(som):
 
 # HEXAGONAL PLOTS
 def plot_hexagonal_heatmap(data, title, cmap="Purples", cbar_label="Value", annotate=True):
-    """
-    Plot a hexagonal heatmap using the given data, with centers arranged in a true honeycomb pattern.
-    data: 2D numpy array of shape (k, k)
-    """
     k = data.shape[0]
     fig, ax = plt.subplots(figsize=(10, 8))
 
@@ -188,6 +185,7 @@ def plot_hexagonal_som_distance_map(som):
     weights = np.array(som.weights).reshape(som.k, som.k, -1)
     umatrix = np.zeros((som.k, som.k))
     k = som.k
+
     # Hexagonal neighbor offsets (even-q vertical layout)
     neighbor_offsets = [(-1, 0), (-1, 1), (0, -1), (0, 1), (1, 0), (1, 1)]
     neighbor_offsets_odd = [(-1, -1), (-1, 0), (0, -1), (0, 1), (1, -1), (1, 0)]
@@ -199,11 +197,17 @@ def plot_hexagonal_som_distance_map(som):
                 nr, nc = row + dr, col + dc
                 if 0 <= nr < k and 0 <= nc < k:
                     neighbors.append(weights[nr, nc])
-            dists = [np.linalg.norm(weights[row, col] - n) for n in neighbors]
-            umatrix[row, col] = np.mean(dists) if dists else 0
 
+            w = weights[row, col]
+            umatrix[row, col] = np.mean([np.sqrt(np.sum((w - n) ** 2)) for n in neighbors])
+
+    umatrix = (umatrix - np.min(umatrix)) / (np.max(umatrix) - np.min(umatrix))
     fig, ax = plot_hexagonal_heatmap(
-        umatrix, "Distancias promedio entre neuronas vecinas (U-Matrix Hexagonal)", cmap="YlOrRd", cbar_label="Distancia promedio", annotate=True
+        umatrix,
+        "Distancias promedio entre neuronas vecinas (U-Matrix Hexagonal)",
+        cmap="YlOrRd",
+        cbar_label="Distancia promedio",
+        annotate=True,
     )
 
     save_plot(fig, "results/kohonen_hexagonal_umatrix.png")
