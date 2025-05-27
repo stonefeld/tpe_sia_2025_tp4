@@ -1,0 +1,16 @@
+Metadata-Version: 2.4
+Name: tpe-sia-2025-tp4
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.12.9
+Description-Content-Type: text/markdown
+Requires-Dist: jupyter>=1.1.1
+Requires-Dist: matplotlib>=3.10.3
+Requires-Dist: numpy>=2.2.6
+Requires-Dist: pandas>=2.2.3
+Requires-Dist: pyside6>=6.9.0
+Requires-Dist: scikit-learn>=1.6.1
+Requires-Dist: scipy>=1.15.3
+Requires-Dist: seaborn>=0.13.2
+
+# tpe_sia_2025_tp4

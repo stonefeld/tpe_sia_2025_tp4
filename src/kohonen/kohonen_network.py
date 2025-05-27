@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from src.utils import standarize
+from ..utils import standarize
 
 
 class Kohonen(ABC):
