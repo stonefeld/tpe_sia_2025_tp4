@@ -1,4 +1,6 @@
 from collections import defaultdict
+import csv
+import pandas as pd
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -305,4 +307,24 @@ def plot_hexagonal_som_distance_map(som):
     )
 
     save_plot(fig, "results/kohonen_hexagonal_umatrix.png")
+    plt.show()
+
+
+def save_dead_units_result(filename, k, method, dead_units):
+    with open(filename, 'a', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow([k, method, dead_units])
+
+
+def plot_dead_units_comparison(csv_file):
+    df = pd.read_csv(csv_file, header=None, names=["k", "method", "dead_units"])
+    avg_df = df.groupby(["k", "method"])["dead_units"].mean().reset_index()
+    pivot = avg_df.pivot(index="k", columns="method", values="dead_units")
+    pivot.plot(marker='o')
+    plt.title("Average of dead units compared between weight initialization methods")
+    plt.xlabel("k")
+    plt.ylabel("Average number of dead units")
+    plt.legend(title="")
+    plt.tight_layout()
+    save_plot(plt.gcf(), "results/dead_units_comparison.png")
     plt.show()

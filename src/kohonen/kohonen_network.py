@@ -98,6 +98,12 @@ class Kohonen(ABC):
     def _calculate_distance(self, a, b):
         pass
 
+    def count_dead_units(self):
+        winners = [idx for _, idx in self.map_entities()]
+        all_indices = set(range(self.k * self.k))
+        dead = all_indices - set(winners)
+        return len(dead)
+
 
 class KohonenSquare(Kohonen):
     def _calculate_distance(self, a, b):
