@@ -3,12 +3,13 @@
   "init_opts": {
     "shape": "square",
     "learning_rate": 0.1,
-    "k": 4,
+    "k": 5,
+    "r": 2,
     "standarization": "zscore",
     "weight_init": "sample"
   },
   "train_opts": {
-    "epochs": 10000,
-    "train_method": "stochastic"
+    "epochs": 100,
+    "train_method": "batch"
   }
 }

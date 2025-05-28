@@ -31,6 +31,7 @@ class Kohonen(ABC):
         method = kwargs.get("train_method", "batch")
         epochs = kwargs.get("epochs", 1000)
         train_fn = self._get_train_fn(method)
+        history = []
 
         for epoch in range(epochs):
             # Reducimos la tasa de aprendizaje y el radio
@@ -39,6 +40,12 @@ class Kohonen(ABC):
 
             # Entrenamos
             train_fn(lr, r)
+            
+            # Guardamos el mapeo de entidades para esta época
+            entity_mapping = self.map_entities()
+            history.append(entity_mapping)
+
+        return history
 
     def map_entities(self):
         return [(e, self._get_winner(x)) for e, x in zip(self.entities, self.x)]

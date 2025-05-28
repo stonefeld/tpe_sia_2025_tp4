@@ -33,6 +33,6 @@ def run_oja(init_opts: Dict, train_opts: Dict):
     proj_pca = data_zscore @ w_pca
 
     plot_projection(data_zscore, entities, w_oja, title="Proyección sobre PC1 (Oja)", save_path="results/oja_proyeccion.png")
-    plot_projection(data_zscore, entities, w_pca, title="Proyección sobre PC1 (PCA)", save_path="results/pca_proyeccion.png")
+    plot_projection(data_zscore, entities, w_pca, title="Proyección sobre PC1 (SkLearn)", save_path="results/pca_proyeccion.png")
     plot_projection_difference(entities, proj_oja, proj_pca, save_path="results/diff_oja_pca.png")
     plot_scatter_oja_vs_pca(proj_oja, proj_pca, save_path="results/scatter_oja_pca.png")

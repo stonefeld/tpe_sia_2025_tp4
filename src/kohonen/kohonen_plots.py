@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
+from collections import defaultdict
 
 from src.utils import save_plot
 
@@ -70,13 +71,18 @@ def plot_square_som_distance_map(som):
                 neighbors.append(weights[i, j + 1])
 
             w = weights[i, j]
-            # umatrix[i, j] = np.mean([np.sqrt(np.sum((w - n) ** 2)) for n in neighbors])
             umatrix[i, j] = np.mean([np.linalg.norm(w - n) for n in neighbors])
+
+    # Build entity map for annotations
+    results = som.map_entities()
+    entity_map = [[[] for _ in range(som.k)] for _ in range(som.k)]
+    for e, idx in results:
+        row, col = divmod(idx, som.k)
+        entity_map[row][col].append(e)
 
     fig, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(
         umatrix,
-        annot=True,
         cmap="YlOrRd",
         cbar_kws={"label": "Distancia promedio"},
         ax=ax,
@@ -88,7 +94,78 @@ def plot_square_som_distance_map(som):
     cbar.outline.set_edgecolor("black")
     cbar.outline.set_linewidth(0.5)
 
+    # Annotate with country names
+    for row in range(som.k):
+        for col in range(som.k):
+            names = entity_map[row][col]
+            if names:
+                text = "\n".join(names)
+                value = umatrix[row, col]
+                norm_value = value / umatrix.max() if umatrix.max() > 0 else 0
+                color = "white" if norm_value > 0.5 else "black"
+                ax.text(
+                    col + 0.5,
+                    row + 0.5,
+                    text,
+                    ha="center",
+                    va="center",
+                    color=color,
+                    clip_on=True,
+                )
+
     save_plot(fig, "results/kohonen_umatrix.png")
+    plt.show()
+
+
+def plot_square_som_country_counts_heatmap(history, entities, k):
+    # Map each entity to its short code (first 3 letters, uppercased)
+    short_names = {e: e[:3].upper() for e in entities}
+
+    # Prepare data structures
+    cell_counts = np.zeros((k, k), dtype=int)
+    cell_country_counts = [[defaultdict(int) for _ in range(k)] for _ in range(k)]
+
+    # Aggregate counts
+    for epoch_mapping in history:
+        for entity, winner in epoch_mapping:
+            row, col = divmod(winner, k)
+            cell_counts[row, col] += 1
+            cell_country_counts[row][col][short_names[entity]] += 1
+
+    # Prepare annotation text for each cell
+    annotations = np.empty((k, k), dtype=object)
+    for row in range(k):
+        for col in range(k):
+            if cell_country_counts[row][col]:
+                text = "\n".join(
+                    f"{country}: {count}"
+                    for country, count in sorted(
+                        cell_country_counts[row][col].items(),
+                        key=lambda item: item[1],
+                        reverse=True
+                    )
+                )
+                annotations[row, col] = text
+            else:
+                annotations[row, col] = ""
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+    sns.heatmap(
+        cell_counts,
+        cmap="Greens",
+        cbar_kws={"label": "Cantidad de países"},
+        ax=ax,
+        annot=annotations,
+        square=True,
+        fmt="",
+    )
+    ax.set_title("Cantidad de Países por Neurona en el tiempo")
+
+    cbar = ax.collections[0].colorbar
+    cbar.outline.set_edgecolor("black")
+    cbar.outline.set_linewidth(0.5)
+
+    save_plot(fig, "results/kohonen_country_counts_heatmap.png")
     plt.show()
 
 
