@@ -12,9 +12,9 @@ def compare_oja():
     lrs = [0.01, 0.05, 0.1]
     weight_inits = [None, "positive", "negative"]
     decay_fns = [
-        ("Constante", lambda x, t, m: x),
-        ("1/(1+t)", lambda x, t, m: x / (1 + t)),
-        ("Exponencial", lambda x, t, m: x * np.exp(-t / m)),
+        ("Constante", "linear"),
+        ("1/(1+t)", "inverse"),
+        ("Exponencial", "exponential"),
     ]
     df = pd.read_csv("assets/europe.csv")
     varnames = list(df.columns)[1:]  # Excluir la columna "Country"
@@ -28,7 +28,7 @@ def compare_oja():
                 data,
                 learning_rate=lr,
                 standarization=std,
-                decay_fn=lambda x, t, m: x * np.exp(-t / m),
+                decay_fn="exponential",
             )
             w = oja.train(epochs=1000)
             ax = axes[i, j]

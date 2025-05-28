@@ -1,46 +1,102 @@
-import matplotlib.pyplot as plt
 import numpy as np
-
+import matplotlib.pyplot as plt
 from src.hopfield.hopfield_network import Hopfield
 
+def get_patterns():
+    # Definí patrones simples (ejemplo: 4 letras como en tu main)
+    patterns = []
+    letters = [
+        np.array([
+            [-1, 1, 1, 1, -1],
+            [1, -1, -1, -1, 1],
+            [1, 1, 1, 1, 1],
+            [1, -1, -1, -1, 1],
+            [1, -1, -1, -1, 1]
+        ]),
+        np.array([
+            [1, 1, 1, 1, 1],
+            [1, -1, -1, -1, -1],
+            [1, 1, 1, -1, -1],
+            [1, -1, -1, -1, -1],
+            [1, 1, 1, 1, 1]
+        ]),
+        np.array([
+            [ 1, -1, -1, -1,  1],
+            [-1,  1, -1,  1, -1],
+            [-1, -1,  1, -1, -1],
+            [-1,  1, -1,  1, -1],
+            [ 1, -1, -1, -1,  1]
+        ]),
+        np.array([
+            [1, 1, 1, 1, 1],
+            [-1, -1, -1, 1, -1],
+            [-1, -1, -1, 1, -1],
+            [1, -1, -1, 1, -1],
+            [1, 1, 1, -1, -1]
+        ]),
+    ]
+    for l in letters:
+        patterns.append(l.flatten())
+    return patterns
 
-def letter_patterns(n):
-    # Define una letra básica para tamaño n x n
-    p = np.ones((n, n))
-    p[1:-1, 1:-1] = -1
-    return [p.flatten(), np.flipud(p).flatten()]
+def hopfield_comparison(n_trials=100, noise_levels=None):
+    if noise_levels is None:
+        noise_levels = [0, 1, 2, 3, 4, 5, 7, 10, 13, 16, 20]  # hasta 25 bits posibles
 
+    patterns = get_patterns()
+    pattern_size = patterns[0].size
+    n_patterns = len(patterns)
 
-def compare_hopfield():
-    ns = [5, 7, 9]
-    flip_bits = [1, 3, 5, 10]
-    results = []
-    for n in ns:
-        patterns = letter_patterns(n)
-        net = Hopfield(size=n * n)
-        net.train(np.array(patterns))
-        orig = patterns[0]
-        recover_rates = []
-        for flips in flip_bits:
+    avg_success = []
+    std_success = []
+    all_success = []  # Para boxplot
+
+    for n_noise in noise_levels:
+        trial_success = []
+        for trial in range(n_trials):
+            net = Hopfield(size=pattern_size)
+            net.train(np.array(patterns))
+
             correct = 0
-            for _ in range(20):
+            for orig in patterns:
                 noisy = orig.copy()
-                idx = np.random.choice(len(noisy), flips, replace=False)
-                noisy[idx] *= -1
-                recall = net.recall(noisy, steps=10)[-1]
-                if np.all(recall == orig):
+                if n_noise > 0:
+                    flip_idx = np.random.choice(pattern_size, n_noise, replace=False)
+                    noisy[flip_idx] *= -1
+                recalled = net.recall(noisy, steps=10)[-1]
+                if np.all(recalled == orig):
                     correct += 1
-            recover_rates.append(correct / 20)
-        results.append(recover_rates)
+            tasa = correct / n_patterns
+            trial_success.append(tasa)
+        avg_success.append(np.mean(trial_success))
+        std_success.append(np.std(trial_success))
+        all_success.append(trial_success)
 
-    for i, n in enumerate(ns):
-        plt.plot(flip_bits, results[i], marker="o", label=f"{n}x{n}")
-    plt.xlabel("Bits alterados")
-    plt.ylabel("Tasa de recuperación")
-    plt.title("Robustez vs tamaño de red y ruido")
+    # Gráfico de tasa promedio con barras de error
+    plt.figure(figsize=(8, 5))
+    plt.errorbar(noise_levels, avg_success, yerr=std_success, marker='o', capsize=5, label='Tasa de acierto')
+    plt.title('Tasa de acierto promedio vs. cantidad de bits ruidosos')
+    plt.xlabel('Bits alterados')
+    plt.ylabel('Tasa de acierto promedio')
+    plt.ylim(-0.05, 1.05)
+    plt.grid()
     plt.legend()
     plt.show()
 
+    # Boxplot de dispersión por nivel de ruido
+    plt.figure(figsize=(8, 5))
+    plt.boxplot(all_success, positions=noise_levels)
+    plt.title('Distribución de tasa de acierto (boxplot) por nivel de ruido')
+    plt.xlabel('Bits alterados')
+    plt.ylabel('Tasa de acierto')
+    plt.ylim(-0.05, 1.05)
+    plt.grid()
+    plt.show()
+
+    # (Opcional) Imprimir tabla resumen
+    print("Bits Alterados | Tasa promedio | STD")
+    for n, avg, stdev in zip(noise_levels, avg_success, std_success):
+        print(f"{n:<14} {avg:.2f}         {stdev:.2f}")
 
 if __name__ == "__main__":
-    compare_hopfield()
+    hopfield_comparison()
