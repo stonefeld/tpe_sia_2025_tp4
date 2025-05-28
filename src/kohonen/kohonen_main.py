@@ -23,3 +23,6 @@ def run_kohonen(init_opts: Dict, train_opts: Dict):
         som.train(**train_opts)
         plot_hexagonal_som_assignments(som)
         plot_hexagonal_som_distance_map(som)
+
+    else:
+        raise ValueError(f"Unknown shape: {shape}")

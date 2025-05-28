@@ -9,7 +9,7 @@ class Oja:
         self.x = standarize(x, kwargs.get("standarization", "zscore"))
         self.learning_rate = kwargs.get("learning_rate", 0.1)
         self.weights = np.random.uniform(0, 1, x.shape[1])
-        self.decay_fn = get_decay_fn(kwargs.get("decay_fn", "exponential"))
+        self.decay_fn = get_decay_fn(kwargs.get("decay_fn", "inverse"))
 
     def train(self, **kwargs):
         epochs = kwargs.get("epochs", 1000)

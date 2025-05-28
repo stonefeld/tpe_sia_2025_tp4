@@ -1,9 +1,9 @@
-from collections import defaultdict
 import csv
-import pandas as pd
+from collections import defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
 
 from src.utils import save_plot
@@ -104,7 +104,7 @@ def plot_square_som_distance_map(som):
             if names:
                 text = "\n".join(names)
                 value = umatrix[row, col]
-                norm_value = value / umatrix.max() if umatrix.max() > 0 else 0
+                norm_value = (value - umatrix.min()) / (umatrix.max() - umatrix.min()) if umatrix.max() > umatrix.min() else 0
                 color = "white" if norm_value > 0.5 else "black"
                 ax.text(
                     col + 0.5,
@@ -141,12 +141,7 @@ def plot_square_som_country_counts_heatmap(history, entities, k):
         for col in range(k):
             if cell_country_counts[row][col]:
                 text = "\n".join(
-                    f"{country}: {count}"
-                    for country, count in sorted(
-                        cell_country_counts[row][col].items(),
-                        key=lambda item: item[1],
-                        reverse=True
-                    )
+                    f"{country}: {count}" for country, count in sorted(cell_country_counts[row][col].items(), key=lambda item: item[1], reverse=True)
                 )
                 annotations[row, col] = text
             else:
@@ -297,7 +292,6 @@ def plot_hexagonal_som_distance_map(som):
             w = weights[row, col]
             umatrix[row, col] = np.mean([np.sqrt(np.sum((w - n) ** 2)) for n in neighbors])
 
-    umatrix = (umatrix - np.min(umatrix)) / (np.max(umatrix) - np.min(umatrix))
     fig, ax = plot_hexagonal_heatmap(
         umatrix,
         "Distancias promedio entre neuronas vecinas (U-Matrix Hexagonal)",
@@ -311,7 +305,7 @@ def plot_hexagonal_som_distance_map(som):
 
 
 def save_dead_units_result(filename, k, method, dead_units):
-    with open(filename, 'a', newline='') as f:
+    with open(filename, "a", newline="") as f:
         writer = csv.writer(f)
         writer.writerow([k, method, dead_units])
 
@@ -320,10 +314,10 @@ def plot_dead_units_comparison(csv_file):
     df = pd.read_csv(csv_file, header=None, names=["k", "method", "dead_units"])
     avg_df = df.groupby(["k", "method"])["dead_units"].mean().reset_index()
     pivot = avg_df.pivot(index="k", columns="method", values="dead_units")
-    pivot.plot(marker='o')
-    plt.title("Average of dead units compared between weight initialization methods")
+    pivot.plot(marker="o")
+    plt.title("Promedio de celdas muertas por k y método")
     plt.xlabel("k")
-    plt.ylabel("Average number of dead units")
+    plt.ylabel("Celdas muertas")
     plt.legend(title="")
     plt.tight_layout()
     save_plot(plt.gcf(), "results/dead_units_comparison.png")
