@@ -1,10 +1,12 @@
+from typing import Dict
+
 import numpy as np
 
 from src.hopfield.hopfield_network import Hopfield
 from src.hopfield.hopfield_plots import plot_comparison, plot_recall_steps
 
 
-def run_hopfield():
+def run_hopfield(init_opts: Dict, train_opts: Dict):
     # Letras A, E, H, J con formas claras
     letters = {
         "A": np.array(
@@ -47,8 +49,8 @@ def run_hopfield():
 
     # Entrenamiento
     patterns = [v.flatten() for v in letters.values()]
-    net = Hopfield(size=patterns[0].size)
-    net.train(np.array(patterns))
+    net = Hopfield(size=patterns[0].size, **init_opts)
+    net.train(np.array(patterns), **train_opts)
 
     # Selección de letra y ruido
     original = patterns[-1]
@@ -67,7 +69,3 @@ def run_hopfield():
     random_pattern = np.random.choice([-1, 1], size=25)
     history = net.recall(random_pattern, steps=5)
     plot_recall_steps(history, filepath="results/hopfield_espurios.png")
-
-
-if __name__ == "__main__":
-    run_hopfield()

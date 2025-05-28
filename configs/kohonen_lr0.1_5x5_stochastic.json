@@ -1,0 +1,14 @@
+{
+  "algorithm": "kohonen",
+  "init_opts": {
+    "shape": "square",
+    "learning_rate": 0.1,
+    "k": 4,
+    "standarization": "zscore",
+    "weight_init": "sample"
+  },
+  "train_opts": {
+    "epochs": 10000,
+    "train_method": "stochastic"
+  }
+}

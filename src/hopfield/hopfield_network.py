@@ -2,9 +2,9 @@ import numpy as np
 
 
 class Hopfield:
-    def __init__(self, size):
-        self.size = size
-        self.weights = np.zeros((size, size))
+    def __init__(self, **kwargs):
+        self.size = kwargs.get("size", 5)
+        self.weights = np.zeros((self.size, self.size))
 
     def train(self, patterns):
         for p in patterns:
@@ -14,10 +14,11 @@ class Hopfield:
         self.weights /= self.size
         np.fill_diagonal(self.weights, 0)
 
-    def recall(self, pattern, steps=50):
+    def recall(self, pattern, **kwargs):
         state = pattern.copy()
         history = [state.copy()]
         n = self.size
+        steps = kwargs.get("steps", 50)
 
         for _ in range(steps):
             indices = np.random.permutation(n)

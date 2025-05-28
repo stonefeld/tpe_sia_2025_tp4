@@ -1,3 +1,5 @@
+from typing import Dict
+
 import numpy as np
 from sklearn.decomposition import PCA
 
@@ -6,19 +8,13 @@ from src.oja.oja_plots import plot_projection, plot_projection_difference, plot_
 from src.utils import load_countries_data, standarize
 
 
-def run_oja():
+def run_oja(init_opts: Dict, train_opts: Dict):
     # === Cargar datos ===
     entities, data = load_countries_data("assets/europe.csv")
 
     # === Entrenar modelo de Oja ===
-    oja = Oja(
-        entities,
-        data,
-        learning_rate=0.1,
-        standarization="zscore",
-        decay_fn=lambda x, t, m: x / (1 + t),
-    )
-    w_oja = oja.train(epochs=1000)
+    oja = Oja(entities, data, **init_opts)
+    w_oja = oja.train(**train_opts)
     print(f"Componente principal (Regla de Oja): {w_oja.tolist()}")
 
     # === Comparar con PCA (sklearn) ===
@@ -40,7 +36,3 @@ def run_oja():
     plot_projection(data_zscore, entities, w_pca, title="Proyección sobre PC1 (PCA)", save_path="results/pca_proyeccion.png")
     plot_projection_difference(entities, proj_oja, proj_pca, save_path="results/diff_oja_pca.png")
     plot_scatter_oja_vs_pca(proj_oja, proj_pca, save_path="results/scatter_oja_pca.png")
-
-
-if __name__ == "__main__":
-    run_oja()

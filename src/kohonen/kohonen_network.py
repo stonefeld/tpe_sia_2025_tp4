@@ -2,19 +2,20 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from ..utils import standarize
+from src.utils import get_decay_fn, standarize
 
 
 class Kohonen(ABC):
-    def __init__(self, entities, x, k=3, learning_rate=0.1, standarization="unit", weight_init="uniform", r=None, decay_fn=None):
+    def __init__(self, entities, x, **kwargs):
         self.entities = entities
-        self.x = standarize(x, standarization)
-        self.k = k
-        self.learning_rate = learning_rate
-        self.r = r if r is not None else k
+        self.x = standarize(x, kwargs.get("standarization", "zscore"))
+        self.k = kwargs.get("k", 5)
+        self.learning_rate = kwargs.get("learning_rate", 0.1)
+        self.r = kwargs.get("r", self.k)
 
         n = self.x.shape[1]
         neurons = self.k**2
+        weight_init = kwargs.get("weight_init", "uniform")
 
         if weight_init == "uniform":
             self.weights = [np.random.uniform(0, 1, n) for _ in range(neurons)]
@@ -24,9 +25,12 @@ class Kohonen(ABC):
         else:
             raise ValueError(f"Unknown weight_init method: {weight_init}")
 
-        self.decay_fn = decay_fn if decay_fn else lambda x, t, m: x
+        self.decay_fn = get_decay_fn(kwargs.get("decay_fn", "exponential"))
 
-    def train(self, epochs=1000, method="batch"):
+    def train(self, **kwargs):
+        method = kwargs.get("train_method", "batch")
+        epochs = kwargs.get("epochs", 1000)
+
         if method == "batch":
             for epoch in range(epochs):
                 lr = self.decay_fn(self.learning_rate, epoch, epochs)

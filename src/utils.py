@@ -29,3 +29,14 @@ def standarize(data, method="zscore"):
         ret /= norms
 
     return ret
+
+
+def get_decay_fn(decay_type):
+    if decay_type == "exponential":
+        return lambda x, t, m: x * np.exp(-t / m)
+    elif decay_type == "inverse":
+        return lambda x, t, m: x * 1 / (1 + t)
+    elif decay_type == "linear":
+        return lambda x, t, m: x
+    else:
+        raise ValueError(f"Unknown decay type: {decay_type}")
