@@ -7,12 +7,12 @@ from src.utils import save_plot
 
 # SQUARE PLOTS
 def plot_square_som_assignments(som):
-    results = som.map_input()
+    results = som.map_entities()
     heatmap = np.zeros((som.k, som.k), dtype=int)
     entity_map = [[[] for _ in range(som.k)] for _ in range(som.k)]
 
     for e, i in results:
-        row, col = i // som.k, i % som.k
+        row, col = divmod(i, som.k)
         heatmap[row, col] += 1
         entity_map[row][col].append(e)
 
@@ -70,9 +70,9 @@ def plot_square_som_distance_map(som):
                 neighbors.append(weights[i, j + 1])
 
             w = weights[i, j]
-            umatrix[i, j] = np.mean([np.sqrt(np.sum((w - n) ** 2)) for n in neighbors])
+            # umatrix[i, j] = np.mean([np.sqrt(np.sum((w - n) ** 2)) for n in neighbors])
+            umatrix[i, j] = np.mean([np.linalg.norm(w - n) for n in neighbors])
 
-    umatrix = (umatrix - np.min(umatrix)) / (np.max(umatrix) - np.min(umatrix))
     fig, ax = plt.subplots(figsize=(10, 8))
     sns.heatmap(
         umatrix,
@@ -112,8 +112,7 @@ def plot_hexagonal_heatmap(data, title, cmap="Purples", cbar_label="Value", anno
 
     # Draw hexagons
     for idx, (x, y) in enumerate(centers):
-        row = idx // k
-        col = idx % k
+        row, col = divmod(idx, k)
         value = data[row, col]
         color = plt.cm.get_cmap(cmap)(value / data.max() if data.max() > 0 else 0)
         # Hexagon vertices
@@ -149,12 +148,12 @@ def plot_hexagonal_heatmap(data, title, cmap="Purples", cbar_label="Value", anno
 
 
 def plot_hexagonal_som_assignments(som):
-    results = som.map_input()
+    results = som.map_entities()
     heatmap = np.zeros((som.k, som.k), dtype=int)
     entity_map = [[[] for _ in range(som.k)] for _ in range(som.k)]
 
     for e, i in results:
-        row, col = i // som.k, i % som.k
+        row, col = divmod(i, som.k)
         heatmap[row, col] += 1
         entity_map[row][col].append(e)
 

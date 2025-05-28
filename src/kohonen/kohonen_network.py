@@ -30,38 +30,22 @@ class Kohonen(ABC):
     def train(self, **kwargs):
         method = kwargs.get("train_method", "batch")
         epochs = kwargs.get("epochs", 1000)
+        train_fn = self._get_train_fn(method)
 
-        if method == "batch":
-            for epoch in range(epochs):
-                lr = self.decay_fn(self.learning_rate, epoch, epochs)
-                r = max(self.decay_fn(self.r, epoch, epochs), 1)
+        for epoch in range(epochs):
+            # Reducimos la tasa de aprendizaje y el radio
+            lr = self.decay_fn(self.learning_rate, epoch, epochs)
+            r = self.decay_fn(self.r, epoch, epochs)
 
-                for xi in self.x:
-                    wk_idx = self._get_winner(xi)
-                    for i in self._get_neighbors(wk_idx, r):
-                        self.weights[i] += lr * (xi - self.weights[i])
+            # Entrenamos
+            train_fn(lr, r)
 
-        elif method == "stochastic":
-            for epoch in range(epochs):
-                lr = self.decay_fn(self.learning_rate, epoch, epochs)
-                r = max(self.decay_fn(self.r, epoch, epochs), 1)
-
-                xi_idx = np.random.choice(len(self.x))
-                xi = self.x[xi_idx]
-                wk_idx = self._get_winner(xi)
-                neighbors = self._get_neighbors(wk_idx, r)
-
-                for i in neighbors:
-                    self.weights[i] += lr * (xi - self.weights[i])
-
-        else:
-            raise ValueError(f"Unknown training method: {method}")
-
-    def map_input(self):
+    def map_entities(self):
         return [(e, self._get_winner(x)) for e, x in zip(self.entities, self.x)]
 
+    # GETTERS
     def _get_winner(self, xi):
-        return np.argmin([self._calculate_distance(w, xi) for w in self.weights])
+        return np.argmin([self._euclidean_distance(w, xi) for w in self.weights])
 
     def _get_neighbors(self, winner_idx, r):
         winner_coords = np.array(divmod(winner_idx, self.k))
@@ -74,14 +58,43 @@ class Kohonen(ABC):
 
         return neighbors
 
+    # TRAINING METHODS
+    def _get_train_fn(self, method):
+        if method == "batch":
+            return self._train_batch
+        elif method == "stochastic":
+            return self._train_stochastic
+        else:
+            raise ValueError(f"Unknown training method: {method}")
+
+    def _train_batch(self, lr, r):
+        for xi in self.x:
+            winner = self._get_winner(xi)
+            self._update_weights(xi, winner, r)
+
+    def _train_stochastic(self, lr, r):
+        xi = self.x[np.random.choice(len(self.x))]
+        winner = self._get_winner(xi)
+        self._update_weights(xi, winner, r)
+
+    def _update_weights(self, xi, winner_idx, r):
+        neighbors = self._get_neighbors(winner_idx, r)
+        for i in neighbors:
+            self.weights[i] += self.learning_rate * (xi - self.weights[i])
+
+    # DISTANCE METHODS
+    def _euclidean_distance(self, a, b):
+        # return np.sqrt(np.sum((a - b) ** 2))
+        return np.linalg.norm(a - b)
+
     @abstractmethod
-    def _calculate_distance(self, winner_idx, r):
+    def _calculate_distance(self, a, b):
         pass
 
 
 class KohonenSquare(Kohonen):
     def _calculate_distance(self, a, b):
-        return np.sqrt(np.sum((a - b) ** 2))
+        return self._euclidean_distance(a, b)
 
 
 class KohonenHexagonal(Kohonen):

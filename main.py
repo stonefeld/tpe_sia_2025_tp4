@@ -34,8 +34,6 @@ def main():
         try:
             with open(config_file, "r") as f:
                 config = json.load(f)
-
-            print(f"\nProcessing configuration from {config_file}")
             run_algorithm(config)
 
         except FileNotFoundError:

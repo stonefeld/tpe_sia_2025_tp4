@@ -31,7 +31,7 @@ def compare_kohonen():
                 decay_fn=lambda x, t, m: x * np.exp(-t / m),
             )
             som.train(epochs=1000)
-            mapping = som.map_input()
+            mapping = som.map_entities()
             hits = np.zeros((4, 4))
             for _, idx in mapping:
                 hits[idx // 4, idx % 4] += 1
@@ -58,7 +58,7 @@ def compare_kohonen():
                 decay_fn=df,
             )
             som.train(epochs=1000)
-            mapping = som.map_input()
+            mapping = som.map_entities()
             hits = np.zeros((4, 4))
             for _, idx in mapping:
                 hits[idx // 4, idx % 4] += 1
@@ -84,7 +84,7 @@ def compare_kohonen():
             decay_fn=lambda x, t, m: x * np.exp(-t / m),
         )
         som.train(epochs=1000)
-        mapping = som.map_input()
+        mapping = som.map_entities()
         hits = np.zeros((4, 4))
         for _, idx in mapping:
             hits[idx // 4, idx % 4] += 1
