@@ -1,7 +1,8 @@
+from collections import defaultdict
+
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
-from collections import defaultdict
 
 from src.utils import save_plot
 
@@ -166,6 +167,23 @@ def plot_square_som_country_counts_heatmap(history, entities, k):
     cbar.outline.set_linewidth(0.5)
 
     save_plot(fig, "results/kohonen_country_counts_heatmap.png")
+    plt.show()
+
+
+def plot_square_som_variable_heatmap(som, variable_index, variable_name="Variable"):
+    weights = np.array(som.weights).reshape(som.k, som.k, -1)
+    variable_plane = weights[:, :, variable_index]
+    fig, ax = plt.subplots(figsize=(8, 7))
+    sns.heatmap(
+        variable_plane,
+        cmap="Blues",
+        cbar_kws={"label": variable_name},
+        ax=ax,
+        square=True,
+    )
+    ax.set_title(f"{variable_name} per neuron")
+    plt.tight_layout()
+    save_plot(fig, f"results/kohonen_{variable_name.lower()}_heatmap.png")
     plt.show()
 
 
