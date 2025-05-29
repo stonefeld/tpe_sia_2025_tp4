@@ -76,7 +76,6 @@ def plot_square_som_distance_map(som):
             w = weights[i, j]
             umatrix[i, j] = np.mean([np.linalg.norm(w - n) for n in neighbors])
 
-    # Build entity map for annotations
     results = som.map_entities()
     entity_map = [[[] for _ in range(som.k)] for _ in range(som.k)]
     for e, idx in results:
@@ -97,7 +96,6 @@ def plot_square_som_distance_map(som):
     cbar.outline.set_edgecolor("black")
     cbar.outline.set_linewidth(0.5)
 
-    # Annotate with country names
     for row in range(som.k):
         for col in range(som.k):
             names = entity_map[row][col]
@@ -121,21 +119,17 @@ def plot_square_som_distance_map(som):
 
 
 def plot_square_som_country_counts_heatmap(history, entities, k):
-    # Map each entity to its short code (first 3 letters, uppercased)
     short_names = {e: e[:3].upper() for e in entities}
 
-    # Prepare data structures
     cell_counts = np.zeros((k, k), dtype=int)
     cell_country_counts = [[defaultdict(int) for _ in range(k)] for _ in range(k)]
 
-    # Aggregate counts
     for epoch_mapping in history:
         for entity, winner in epoch_mapping:
             row, col = divmod(winner, k)
             cell_counts[row, col] += 1
             cell_country_counts[row][col][short_names[entity]] += 1
 
-    # Prepare annotation text for each cell
     annotations = np.empty((k, k), dtype=object)
     for row in range(k):
         for col in range(k):
@@ -189,12 +183,10 @@ def plot_hexagonal_heatmap(data, title, cmap="Purples", cbar_label="Value", anno
     k = data.shape[0]
     fig, ax = plt.subplots(figsize=(10, 8))
 
-    # Hexagon geometry
     hex_radius = 1.0
     dx = 3 / 2 * hex_radius
     dy = np.sqrt(3) * hex_radius / 2
 
-    # Calculate hexagon centers
     centers = []
     for row in range(k):
         for col in range(k):
@@ -202,12 +194,10 @@ def plot_hexagonal_heatmap(data, title, cmap="Purples", cbar_label="Value", anno
             y = row * 2 * dy + (col % 2) * dy
             centers.append((x, y))
 
-    # Draw hexagons
     for idx, (x, y) in enumerate(centers):
         row, col = divmod(idx, k)
         value = data[row, col]
         color = plt.cm.get_cmap(cmap)(value / data.max() if data.max() > 0 else 0)
-        # Hexagon vertices
         hexagon = plt.Polygon(
             [
                 (
@@ -230,7 +220,6 @@ def plot_hexagonal_heatmap(data, title, cmap="Purples", cbar_label="Value", anno
     ax.set_aspect("equal")
     ax.axis("off")
 
-    # Add colorbar
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(0, data.max()))
     sm.set_array([])
     cbar = plt.colorbar(sm, ax=ax)
@@ -251,7 +240,6 @@ def plot_hexagonal_som_assignments(som):
 
     fig, ax = plot_hexagonal_heatmap(heatmap, "Cantidad de Países por Neurona (Hexagonal)", cmap="Purples", cbar_label="Cantidad de países", annotate=False)
 
-    # Add country names at correct hex centers
     k = som.k
     hex_radius = 1.0
     dx = 3 / 2 * hex_radius
@@ -277,7 +265,6 @@ def plot_hexagonal_som_distance_map(som):
     umatrix = np.zeros((som.k, som.k))
     k = som.k
 
-    # Hexagonal neighbor offsets (even-q vertical layout)
     neighbor_offsets = [(-1, 0), (-1, 1), (0, -1), (0, 1), (1, 0), (1, 1)]
     neighbor_offsets_odd = [(-1, -1), (-1, 0), (0, -1), (0, 1), (1, -1), (1, 0)]
     for row in range(k):

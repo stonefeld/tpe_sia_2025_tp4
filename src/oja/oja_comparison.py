@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 from src.oja.oja_network import Oja
-from src.utils import load_countries_data, standarize
+from src.utils import load_countries_data
 
 
 def compare_oja():

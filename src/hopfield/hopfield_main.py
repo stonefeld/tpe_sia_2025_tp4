@@ -60,9 +60,7 @@ def run_hopfield(init_opts: Dict, train_opts: Dict):
     noise_indices = np.random.choice(len(noisy), size=int(net.size * noise), replace=False)
     noisy[noise_indices] *= -1
 
-    # Recuperación
     history = net.recall(noisy, steps=5)
 
-    # Visualización
     plot_comparison(original, noisy, history[-1][0])
     plot_recall_steps(history)
