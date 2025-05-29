@@ -14,12 +14,13 @@ def plot_pattern(pattern, title="", ax=None):
     ax.axis("off")
 
 
-def plot_recall_steps(history, title_prefix="Paso", filepath="results/hopfield_pasos.png"):
-    steps = history.shape[0]
-    fig, axes = plt.subplots(1, steps, figsize=(steps * 2, 2))
+def plot_recall_steps(history, title_prefix="Paso", filepath="results/hopfield_pasos.png", vertical=False):
+    steps = len(history)
+    size = (steps * 2, 3) if not vertical else (2, steps * 3)
+    fig, axes = plt.subplots(steps if vertical else 1, 1 if vertical else steps, figsize=size)
 
     for i in range(steps):
-        plot_pattern(history[i], title=f"{title_prefix} {i}", ax=axes[i])
+        plot_pattern(history[i][0], title=f"{title_prefix}: {i}\nEnergía: {history[i][1]:.3f}", ax=axes[i])
 
     save_plot(fig, filepath)
     plt.show()

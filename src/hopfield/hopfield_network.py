@@ -6,7 +6,7 @@ class Hopfield:
         self.size = kwargs.get("size", 5)
         self.weights = np.zeros((self.size, self.size))
 
-    def train(self, patterns):
+    def train(self, patterns, **kwargs):
         for p in patterns:
             p = p.reshape(self.size, 1)
             self.weights += np.dot(p, p.T)
@@ -16,7 +16,7 @@ class Hopfield:
 
     def recall(self, pattern, **kwargs):
         state = pattern.copy()
-        history = [state.copy()]
+        history = [(state.copy(), self.energy(state))]
         n = self.size
         steps = kwargs.get("steps", 50)
 
@@ -32,12 +32,12 @@ class Hopfield:
                     state[i] = new_value
                     changed = True
 
-            history.append(state.copy())
+            history.append((state.copy(), self.energy(state)))
 
             if not changed:
                 break
 
-        return np.array(history)
+        return history
 
     def energy(self, state):
-        return -np.dot(state.T, np.dot(self.weights, state))
+        return -0.5 * np.dot(state.T, np.dot(self.weights, state))

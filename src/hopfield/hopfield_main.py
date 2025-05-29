@@ -27,13 +27,15 @@ def run_hopfield(init_opts: Dict, train_opts: Dict):
                 [1, 1, 1, 1, 1],
             ]
         ),
-        "X":np.array([
-            [ 1, -1, -1, -1,  1],
-            [-1,  1, -1,  1, -1],
-            [-1, -1,  1, -1, -1],
-            [-1,  1, -1,  1, -1],
-            [ 1, -1, -1, -1,  1]
-        ]),
+        "X": np.array(
+            [
+                [1, -1, -1, -1, 1],
+                [-1, 1, -1, 1, -1],
+                [-1, -1, 1, -1, -1],
+                [-1, 1, -1, 1, -1],
+                [1, -1, -1, -1, 1],
+            ]
+        ),
         "J": np.array(
             [
                 [1, 1, 1, 1, 1],
@@ -51,19 +53,16 @@ def run_hopfield(init_opts: Dict, train_opts: Dict):
     net.train(np.array(patterns), **train_opts)
 
     # Selección de letra y ruido
-    original = patterns[-1]
+    train_letter = np.array(train_opts.get("letter", letters["J"]))
+    original = train_letter.flatten()
     noisy = original.copy()
-    flip_indices = np.random.choice(len(noisy), size=5, replace=False)
-    noisy[flip_indices] *= -1
+    noise = init_opts.get("noise", 0.2)
+    noise_indices = np.random.choice(len(noisy), size=int(net.size * noise), replace=False)
+    noisy[noise_indices] *= -1
 
     # Recuperación
     history = net.recall(noisy, steps=5)
 
     # Visualización
-    plot_comparison(original, noisy, history[-1])
+    plot_comparison(original, noisy, history[-1][0])
     plot_recall_steps(history)
-
-    # ESTADO ESPURIO
-    random_pattern = np.random.choice([-1, 1], size=25)
-    history = net.recall(random_pattern, steps=5)
-    plot_recall_steps(history, filepath="results/hopfield_espurios.png")
