@@ -27,6 +27,12 @@ def standarize(data, method="zscore"):
         norms = np.linalg.norm(data, axis=1, keepdims=True)
         norms[norms == 0] = 1
         ret /= norms
+    elif method == "minmax":
+        min_val = np.min(data, axis=0)
+        max_val = np.max(data, axis=0)
+        ret = (data - min_val) / (max_val - min_val)
+    else:
+        raise ValueError(f"Unknown standardization method: {method}")
 
     return ret
 

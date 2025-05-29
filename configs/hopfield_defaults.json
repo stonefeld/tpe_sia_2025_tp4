@@ -1,6 +1,3 @@
 {
   "algorithm": "hopfield",
-  "init_opts": {
-    "noise": 0.8
-  }
 }
